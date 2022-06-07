@@ -1,0 +1,6 @@
+---
+# defaults file for instance
+
+aws_instance_operation: ""
+# Valid options are:
+#   env_create

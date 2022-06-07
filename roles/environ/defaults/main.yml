@@ -1,0 +1,51 @@
+---
+# defaults file for environ
+---
+
+# Items created:
+#   - VPC
+#   - Subnet
+#   - Internet gateway
+#   - Entry in default route table
+#   - Security Group
+
+# These are the AWS credentials.
+
+aws_access_key_id: ""
+aws_secret_access_key: ""
+
+# This is used to prefix several of the AWS resource names (see below).
+
+aws_base_name: aws
+
+# These specify the AWS region and availability zone.
+
+aws_region: us-east-2
+aws_az: us-east-2a
+
+# This is the CIDR block for the subnet.
+
+aws_cidr_block: 10.0.0.0/24
+
+# This defines the security group rules to be applied.  The example below opens ports 22 and 5986.
+
+aws_security_group_rules:
+  - proto: tcp
+    from_port: 22
+    to_port: 22
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 5986
+    to_port: 5986
+    cidr_ip: 0.0.0.0/0
+
+aws_security_group_rules_egress:
+  - proto: all
+    cidr_ip: 0.0.0.0/0
+
+# These are defined using aws_base_name as the prefix.  So, there is no need to change these definitions.
+
+aws_vpc_name: "{{ aws_base_name }}-vpc"
+aws_subnet_name: "{{ aws_base_name }}-subnet"
+aws_igw_name: "{{ aws_base_name }}-igw"
+aws_securitygroup_name: "{{ aws_base_name }}-securitygroup"

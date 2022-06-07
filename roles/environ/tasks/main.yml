@@ -1,0 +1,12 @@
+---
+# tasks file for environ
+
+- name: Ensure the AWS environment is created
+  include_tasks:
+    file: env_create.yml
+  when: aws_env_operation == "create"
+
+- name: Ensure the AWS environment is deleted
+  include_tasks:
+    file: env_delete.yml
+  when: aws_env_operation == "delete"
