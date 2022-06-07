@@ -1,6 +1,5 @@
 ---
 # defaults file for environ
----
 
 # Items created:
 #   - VPC
@@ -13,6 +12,13 @@
 
 aws_access_key_id: ""
 aws_secret_access_key: ""
+
+# This specifies what the role should do; the choices are
+#
+#   create: creates the environment
+#   delete: deletes the environment
+
+aws_env_operation: ""
 
 # This is used to prefix several of the AWS resource names (see below).
 
