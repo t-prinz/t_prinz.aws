@@ -97,7 +97,7 @@
 - name: print instance info
   debug:
     var: instance_info
-#    verbosity: 1
+    verbosity: 1
 
 - name: Define common Linux host variables
   set_fact:
@@ -155,7 +155,7 @@
 - name: Print state of instance
   debug:
     msg: " Instance {{ instance_info.instances[0].tags.Name }} is {{ instance_info.instances[0].state.name }}"
-#    verbosity: 1
+    verbosity: 1
 
 #- name: Loop over the tasks file that will get the Windows passwords and create a dictionary
 #  include_tasks: instance_create_tasks.yml
