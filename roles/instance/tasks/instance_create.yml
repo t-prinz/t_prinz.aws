@@ -96,7 +96,7 @@
 
 - name: print instance info
   debug:
-    var: instance_info.results
+    var: instance_info
 #    verbosity: 1
 
 #- name: print instance info msg
