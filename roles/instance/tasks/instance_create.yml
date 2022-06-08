@@ -104,11 +104,10 @@
 #    msg: "instance results:  {{ item.instances[0].private_ip_address }}"
 #  with_items: "{{ instance_info.results }}"
 
-#- name: print instance ids
-#  debug:
-#    msg: "instance id = {{ item.instance_ids[0] }}"
+- name: print instance ids
+  debug:
+    msg: "instance id = {{ instance_info.instance_ids }}"
 #    verbosity: 1
-#  with_items: "{{ instance_info.results }}"
 
 - name: Define common Linux host variables
   set_fact:
@@ -124,19 +123,17 @@
 #  community.aws.ec2_eip:
 #    aws_access_key: "{{ aws_access_key_id }}"
 #    aws_secret_key: "{{ aws_secret_access_key }}"
-#    device_id: "{{ item.instance_ids[0] }}"
+#    device_id: "{{ instance_info.instance_ids[0] }}"
 #    in_vpc: True
 #    region: "{{ aws_region }}"
 #    release_on_disassociation: yes
 #    state: present
-#  with_items: "{{ instance_info.results }}"
 #  register: eip_info
 
 #- name: print eip info
 #  debug:
-#    msg: "ITEM is {{ item['item'].instances[0] }}"
-#    verbosity: 1
-#  with_items: "{{ eip_info.results }}"
+#    var: eip_info
+##    verbosity: 1
 
 #- name: tag eip
 #  amazon.aws.ec2_tag:
