@@ -59,5 +59,6 @@ aws_linux_ansible_user: "ec2-user"
 aws_windows_ansible_user: "Administrator"
 
 # USE aws_windows_ansible_password instead of windows_admin_password
-windows_admin_password: ""
+#windows_admin_password: ""
+aws_windows_ansible_password: ""
 #aws_inventory_file: "./inventory/aws-inventory" THIS NEEDS TO BE REWORKED

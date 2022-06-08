@@ -70,28 +70,29 @@
     verbosity: 1
   when: subnet_info is defined
 
-#- name: create and launch instance
-#  amazon.aws.ec2_instance:
-#    aws_access_key: "{{ aws_access_key_id }}"
-#    aws_secret_key: "{{ aws_secret_access_key }}"
-#    image_id: "{{ aws_instance.aws_image_id }}"
-#    instance_type: "{{ aws_instance.aws_instance_type }}"
-#    key_name: "{{ aws_keypair }}"
-#    name: "{{ aws_base_name }}-{{ aws_instance.ansible_instance_shortname }}"
-#    network:
-#      assign_public_ip: "{{ aws_instance.aws_assign_public_ip }}"
-#    region: "{{ aws_region }}"
-#    security_group: "{{ security_group_info.security_groups[0].group_id }}"
-#    state: started
-#    tags:
-#      OS_Type: "{{ aws_instance.instance_os_type }}"
-#      define_hostname: "{{ aws_instance.define_hostname }}"
-#      update_etchosts_localhost: "{{ aws_instance.update_etchosts_localhost }}"
+- name: create and launch instance
+  amazon.aws.ec2_instance:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    image_id: "{{ aws_instance.aws_image_id }}"
+    instance_type: "{{ aws_instance.aws_instance_type }}"
+    key_name: "{{ aws_keypair }}"
+    name: "{{ aws_base_name }}-{{ aws_instance.ansible_instance_shortname }}"
+    network:
+      assign_public_ip: "{{ aws_instance.aws_assign_public_ip }}"
+    region: "{{ aws_region }}"
+    security_group: "{{ security_group_info.security_groups[0].group_id }}"
+    state: started
+    tags:
+      OS_Type: "{{ aws_instance.instance_os_type }}"
+      define_hostname: "{{ aws_instance.define_hostname }}"
+      update_etchosts_localhost: "{{ aws_instance.update_etchosts_localhost }}"
 #    user_data: "{{ lookup('file', 'win_ec2_user_data.ps1') if (aws_instance.instance_os_type == 'Windows') else omit }}"
-#    volumes: "{{ aws_instance.aws_volume_list }}"
-#    vpc_subnet_id: "{{ subnet_info.subnets[0].id }}"
-#    wait: true
-#  register: instance_info
+    user_data: "{{ lookup('template', 'win_ec2_user_data.ps1.j2') if (aws_instance.instance_os_type == 'Windows') else omit }}"
+    volumes: "{{ aws_instance.aws_volume_list }}"
+    vpc_subnet_id: "{{ subnet_info.subnets[0].id }}"
+    wait: true
+  register: instance_info
 
 #- name: print instance info
 #  debug:
