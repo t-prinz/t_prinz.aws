@@ -99,16 +99,6 @@
     var: instance_info
 #    verbosity: 1
 
-#- name: print instance info msg
-#  debug:
-#    msg: "instance results:  {{ item.instances[0].private_ip_address }}"
-#  with_items: "{{ instance_info.results }}"
-
-- name: print instance ids
-  debug:
-    msg: "instance id = {{ instance_info.instance_ids }}"
-#    verbosity: 1
-
 - name: Define common Linux host variables
   set_fact:
     common_linux_hostvars: "ansible_user={{ aws_linux_ansible_user }} ansible_ssh_private_key_file={{ aws_keypair_key_file }}"
@@ -161,12 +151,6 @@
     value: "{{ eip_info.public_ip }}"
     wait: Yes
     zone: "{{ aws_route53_zone }}"
-  register: route53_info
-
-- name: Print route53 dns info
-  debug:
-    var: route53_info
-#    verbosity: 1
 
 - name: Print state of instance
   debug:
