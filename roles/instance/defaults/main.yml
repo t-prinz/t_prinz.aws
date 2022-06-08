@@ -14,47 +14,50 @@ aws_instance_operation: ""
 
 # These are the AWS credentials.
 
-aws_access_key_id: ""
-aws_secret_access_key: ""
+####aws_access_key_id: ""
+####aws_secret_access_key: ""
 
 # This is used to prefix several of the AWS resource names (see below).
 
-aws_base_name: aws
+####aws_base_name: aws
 
 # These specify the AWS region and availability zone.
 
-aws_region: us-east-2
+####aws_region: us-east-2
 
 # These are defined using aws_base_name as the prefix.  So, there is no need to change these definitions.
 
-aws_vpc_name: "{{ aws_base_name }}-vpc"
-aws_subnet_name: "{{ aws_base_name }}-subnet"
-aws_igw_name: "{{ aws_base_name }}-igw"
-aws_securitygroup_name: "{{ aws_base_name }}-securitygroup"
+####aws_vpc_name: "{{ aws_base_name }}-vpc"
+####aws_subnet_name: "{{ aws_base_name }}-subnet"
+####aws_igw_name: "{{ aws_base_name }}-igw"
+####aws_securitygroup_name: "{{ aws_base_name }}-securitygroup"
 
 ######## These are the same variables used by the environ role - end ########
 
-aws_instance:
-  ansible_instance_shortname: aapcont
-  instance_os_type: Linux
-  define_hostname: true
-  update_etchosts_localhost: false
-  aws_instance_type: t2.xlarge
-  aws_image_id: ami-009ed7fcb93e10f3a
-  aws_assign_public_ip: yes
-  aws_volume_list:
-    - device_name: /dev/sda1
-      ebs:
-        volume_size: 50
-        delete_on_termination: True
+#aws_instance:
+#  ansible_instance_shortname: aapcont
+#  instance_os_type: Linux
+#  define_hostname: true
+#  update_etchosts_localhost: false
+#  aws_instance_type: t2.xlarge
+#  aws_image_id: ami-009ed7fcb93e10f3a
+#  aws_assign_public_ip: yes
+#  aws_volume_list:
+#    - device_name: /dev/sda1
+#      ebs:
+#        volume_size: 50
+#        delete_on_termination: True
 
 aws_keypair: ""
-aws_route53_zone: "sandbox1380.opentlc.com"
+aws_route53_zone: ""
 
 aws_keypair_key_file: "path-to-keypar-dot-cer-file/{{ aws_keypair }}.cer"
 aws_keypair_key_data: "{{ lookup('file', aws_keypair_key_file) }}"
 
 aws_linux_ansible_user: "ec2-user"
-aws_windows_ansible_user: "Administrator" USE THIS INSTEAD OF windows_ansible_user
-windows_admin_password: SHOULD BE aws_windows_ansible_password
+# USE aws_windows_ansible_user instead of windows_ansible_user
+aws_windows_ansible_user: "Administrator"
+
+# USE aws_windows_ansible_password instead of windows_admin_password
+windows_admin_password: ""
 #aws_inventory_file: "./inventory/aws-inventory" THIS NEEDS TO BE REWORKED
