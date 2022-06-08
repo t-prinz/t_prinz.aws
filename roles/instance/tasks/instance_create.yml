@@ -166,7 +166,7 @@
 - name: Print route53 dns info
   debug:
     var: route53_info
-    verbosity: 1
+#    verbosity: 1
 
 - name: Print state of instance
   debug:
