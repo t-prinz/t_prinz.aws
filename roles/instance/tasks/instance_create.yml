@@ -94,10 +94,10 @@
     wait: true
   register: instance_info
 
-#- name: print instance info
-#  debug:
-#    var: instance_info.results
-##    verbosity: 1
+- name: print instance info
+  debug:
+    var: instance_info.results
+#    verbosity: 1
 
 #- name: print instance info msg
 #  debug:
