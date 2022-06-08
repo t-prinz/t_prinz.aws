@@ -119,21 +119,21 @@
 
 # TODO:  add tag information
 
-#- name: Generate elastic IP for instances
-#  community.aws.ec2_eip:
-#    aws_access_key: "{{ aws_access_key_id }}"
-#    aws_secret_key: "{{ aws_secret_access_key }}"
-#    device_id: "{{ instance_info.instance_ids[0] }}"
-#    in_vpc: True
-#    region: "{{ aws_region }}"
-#    release_on_disassociation: yes
-#    state: present
-#  register: eip_info
+- name: Generate elastic IP for instances
+  community.aws.ec2_eip:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    device_id: "{{ instance_info.instance_ids[0] }}"
+    in_vpc: True
+    region: "{{ aws_region }}"
+    release_on_disassociation: yes
+    state: present
+  register: eip_info
 
-#- name: print eip info
-#  debug:
-#    var: eip_info
-##    verbosity: 1
+- name: print eip info
+  debug:
+    var: eip_info
+#    verbosity: 1
 
 #- name: tag eip
 #  amazon.aws.ec2_tag:
