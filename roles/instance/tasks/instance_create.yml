@@ -1,15 +1,12 @@
 ---
 #
 # Create instances along with associated resources:
+#
 #   - instance
 #   - elastic ip's
 #   - route53 dns entries
 #
 # This assumes that the base environment has already been created
-
-- name: Define dictionary variable
-  set_fact:
-    win_passwd_dict: {}
 
 - name: gather information about the VPC
   amazon.aws.ec2_vpc_net_info:
@@ -87,7 +84,6 @@
       OS_Type: "{{ aws_instance.instance_os_type }}"
       define_hostname: "{{ aws_instance.define_hostname }}"
       update_etchosts_localhost: "{{ aws_instance.update_etchosts_localhost }}"
-#    user_data: "{{ lookup('file', 'win_ec2_user_data.ps1') if (aws_instance.instance_os_type == 'Windows') else omit }}"
     user_data: "{{ lookup('template', 'win_ec2_user_data.ps1.j2') if (aws_instance.instance_os_type == 'Windows') else omit }}"
     volumes: "{{ aws_instance.aws_volume_list }}"
     vpc_subnet_id: "{{ subnet_info.subnets[0].id }}"
@@ -99,9 +95,9 @@
     var: instance_info
     verbosity: 1
 
-- name: Define common Linux host variables
-  set_fact:
-    common_linux_hostvars: "ansible_user={{ aws_linux_ansible_user }} ansible_ssh_private_key_file={{ aws_keypair_key_file }}"
+#- name: Define common Linux host variables
+#  set_fact:
+#    common_linux_hostvars: "ansible_user={{ aws_linux_ansible_user }} ansible_ssh_private_key_file={{ aws_keypair_key_file }}"
 
 #- name: Define common Windows host variables
 #  set_fact:
@@ -156,87 +152,3 @@
   debug:
     msg: " Instance {{ instance_info.instances[0].tags.Name }} is {{ instance_info.instances[0].state.name }}"
     verbosity: 1
-
-#- name: Loop over the tasks file that will get the Windows passwords and create a dictionary
-#  include_tasks: instance_create_tasks.yml
-#  with_items: "{{ eip_info.results }}"
-
-# BEGIN LOOP TASKS
-
-#  Reference:  https://aws.amazon.com/premiumsupport/knowledge-center/retrieve-windows-admin-password/
-
-#- name: Wait at least 4 minutes for Windows password to be available (this waits 5)
-#  pause:
-#    minutes: 5
-#  when: item['item'].instances[0].tags.OS_Type == 'Windows'
-
-#- name: Get the AWS-generated Windows passwords
-#  community.aws.ec2_win_password:
-#    aws_access_key: "{{ aws_access_key_id }}"
-#    aws_secret_key: "{{ aws_secret_access_key }}"
-#    instance_id: "{{ item['item'].instances[0].instance_id }}" 
-#    key_data: "{{ aws_keypair_key_data }}"
-##    profile: "{{ aws_profile }}"
-#    region: "{{ aws_region }}"
-#    wait: True
-#  when: item['item'].instances[0].tags.OS_Type == 'Windows'
-##  when: item.changed
-#  register: aws_gen_windows_password
-
-#- name: Print Windows password
-#  debug:
-#    var: aws_gen_windows_password
-#    verbosity: 1
-#  when: item['item'].instances[0].tags.OS_Type == 'Windows'
-
-#- name: Add an entry to the password dictionary
-#  set_fact:
-#    win_passwd_dict: "{{ win_passwd_dict | combine({ item['item'].instances[0].tags.Name: aws_gen_windows_password.win_password }) }}"
-#  when: item['item'].instances[0].tags.OS_Type == 'Windows'
-
-# END LOOP TASKS
-
-#- name: Print Windows password dictionary
-#  debug:
-#    var: win_passwd_dict
-#    verbosity: 1
-
-#- name: Add new instance to host group, if the instance has been marked as having changed
-#  add_host:
-#    hostname: "{{ item['item'].instances[0].tags.Name }}.{{ aws_route53_zone }}"
-#    groupname: launched
-#    ansible_ssh_extra_args: "{{ ('-o StrictHostKeyChecking=no') if (item['item'].instances[0].tags.OS_Type == 'Linux') else omit }}"
-#    ansible_user: "{{ aws_linux_ansible_user if (item['item'].instances[0].tags.OS_Type == 'Linux') else windows_admin_username }}"
-#    ansible_ssh_private_key_file: "{{ aws_keypair_key_file if (item['item'].instances[0].tags.OS_Type == 'Linux') else omit }}"
-#    ansible_password: "{{ win_passwd_dict[item['item'].instances[0].tags.Name] if (item['item'].instances[0].tags.OS_Type == 'Windows') else omit }}"
-#    ansible_connection: "{{ ('winrm') if (item['item'].instances[0].tags.OS_Type == 'Windows') else omit }}"
-#    ansible_winrm_transport: "{{ ('ntlm') if (item['item'].instances[0].tags.OS_Type == 'Windows') else omit }}"
-#    ansible_port: "{{ ('5985') if (item['item'].instances[0].tags.OS_Type == 'Windows') else omit }}"
-#    specified_os_type: "{{ item['item'].instances[0].tags.OS_Type }}"
-#    define_hostname: "{{ item['item'].instances[0].tags.define_hostname }}"
-#    update_etchosts_localhost: "{{ item['item'].instances[0].tags.update_etchosts_localhost }}"
-#  with_items: "{{ eip_info.results }}"
-#  when: item.changed
-
-#- name: cleanout previous dynamic inventory file
-#  file:
-#    path: "{{ aws_inventory_file }}"
-#    state: absent
-#  when: aws_inventory_file is defined
-
-#- name: add instances to the dynamic inventory file
-#  lineinfile:
-#    create: True
-#    line: "{{ item['item'].instances[0].tags.Name }}.{{ aws_route53_zone }} specified_os_type={{ item['item'].instances[0].tags.OS_Type }} {{ common_linux_hostvars if (item['item'].instances[0].tags.OS_Type == 'Linux') else common_windows_hostvars }}"
-#    mode: "0644"
-#    path: "{{ aws_inventory_file }}"
-#    state: present
-#  with_items: "{{ eip_info.results }}"
-#  when: aws_inventory_file is defined
-
-#- name: Print platform if it is defined
-#  debug:
-#    msg: "Platform for instance {{ item['item'].instances[0].tags.Name }} is {{ item['item'].instances[0].platform }}"
-#    verbosity: 1
-#  with_items: "{{ eip_info.results }}"
-#  when: item['item'].instances[0].platform is defined

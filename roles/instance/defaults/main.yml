@@ -36,6 +36,7 @@ aws_instance_operation: ""
 
 #aws_instance:
 #  ansible_instance_shortname: aapcont
+#  instance_infra_provider: aws
 #  instance_os_type: Linux
 #  define_hostname: true
 #  update_etchosts_localhost: false
@@ -51,14 +52,7 @@ aws_instance_operation: ""
 aws_keypair: ""
 aws_route53_zone: ""
 
-aws_keypair_key_file: "path-to-keypar-dot-cer-file/{{ aws_keypair }}.cer"
-aws_keypair_key_data: "{{ lookup('file', aws_keypair_key_file) }}"
-
 aws_linux_ansible_user: "ec2-user"
-# USE aws_windows_ansible_user instead of windows_ansible_user
-aws_windows_ansible_user: "Administrator"
 
-# USE aws_windows_ansible_password instead of windows_admin_password
-#windows_admin_password: ""
+aws_windows_ansible_user: "Administrator"
 aws_windows_ansible_password: ""
-#aws_inventory_file: "./inventory/aws-inventory" THIS NEEDS TO BE REWORKED
