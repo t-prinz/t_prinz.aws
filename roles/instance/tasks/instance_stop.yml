@@ -64,7 +64,12 @@
 
 - name: print instance info
   debug:
-    var: instance_info[0]
+    var: instance_info[0].instances
+#    verbosity: 1
+
+- name: print instance info id
+  debug:
+    var: instance_info[0].instances.instance_id
 #    verbosity: 1
 
 #    - name: print individual instance id's
