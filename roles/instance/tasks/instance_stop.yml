@@ -8,18 +8,22 @@
     region: "{{ aws_region }}"
   register: instance_info
 
-- name: print instance info
-  debug:
-    var: instance_info.instances[0]
-    verbosity: 1
+- name: Block to stop the instance
+  block:
+  when: instance_info.instances[0] is defined
 
-- name: print instance info id
-  debug:
-    msg: "Stopping instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
+    - name: print instance info
+      debug:
+        var: instance_info.instances[0]
+        verbosity: 1
 
-- name: stop instances
-  amazon.aws.ec2_instance:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    instance_ids: "{{ instance_info.instances[0].instance_id }}"
-    state: stopped
+    - name: print instance info id
+      debug:
+        msg: "Stopping instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
+
+    - name: stop instances
+      amazon.aws.ec2_instance:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        instance_ids: "{{ instance_info.instances[0].instance_id }}"
+        state: stopped
