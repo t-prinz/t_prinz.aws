@@ -8,7 +8,7 @@
     region: "{{ aws_region }}"
   register: instance_info
 
-- name: Block to start the instance
+- name: Block to delete the instance
   block:
 
     - name: print instance info
@@ -18,14 +18,7 @@
 
     - name: print instance info id
       debug:
-        msg: "Starting instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
-
-    - name: start instances
-      amazon.aws.ec2_instance:
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_access_key }}"
-        instance_ids: "{{ instance_info.instances[0].instance_id }}"
-        state: started
+        msg: "Deleting instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
 
   when: instance_info.instances[0] is defined
 
@@ -62,7 +55,7 @@
   debug:
     var: eip_info
 #    verbosity: 1
-#  when: eip_info
+  when: eip_info.addresses[0] is defined
 
 - name: get route53 zone id
   community.aws.route53_zone:
@@ -83,9 +76,8 @@
     query: record_sets
     hosted_zone_id: "{{ route53_zone_info.zone_id }}"
     max_items: "{{ '1'|int }}"
-    start_record_name: "{{ item.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
-  when: item.addresses[0].tags.Name is defined
-  with_items: "{{ eip_info.results }}"
+    start_record_name: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+  when: eip_info.addresses[0].tags.Name is defined
   register: route53_out
 
 - name: print route53 dns info
