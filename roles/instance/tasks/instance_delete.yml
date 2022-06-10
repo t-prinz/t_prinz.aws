@@ -83,7 +83,7 @@
 - name: print route53 dns info
   debug:
     var: route53_out
-    verbosity: 1
+#    verbosity: 1
 
 #    - name: delete resources associated with the instances
 #      block:
