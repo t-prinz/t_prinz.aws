@@ -140,20 +140,16 @@
 #          tags:
 #            - always
 
-#    - name: stop instances
-#      amazon.aws.ec2_instance:
-#        aws_access_key: "{{ aws_access_key_id }}"
-#        aws_secret_key: "{{ aws_secret_access_key }}"
-#        image_id: "{{ item.image_id }}"
-#        instance_ids: "{{ item.instance_id }}"
-#        instance_type: "{{ item.instance_type }}"
-#        name: "{{ item.tags.Name }}"
-#        region: "{{ aws_region }}"
-#        state: stopped
-#      with_items: "{{ instance_info.instances }}"
-#      tags:
-#        - never
-#        - stop
+- name: stop instances
+  amazon.aws.ec2_instance:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+#    image_id: "{{ item.image_id }}"
+    instance_ids: "{{ instance_info.instances[0].instance_id }}"
+#    instance_type: "{{ item.instance_type }}"
+#    name: "{{ item.tags.Name }}"
+#    region: "{{ aws_region }}"
+    state: stopped
 
 
 
