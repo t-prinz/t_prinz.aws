@@ -102,23 +102,21 @@
 #    zone: "{{ aws_route53_zone }}"
 #  when: route53_out.ResourceRecordSets[0].Name is defined
 
-#        - name: print elastic ip info bub
-#          debug:
-#            msg: "eip_info.results is {{ item }}"
-#          when: item.addresses[0].instance_id is defined
-#          with_items: "{{ eip_info.results }}"
+- name: print elastic ip info bub
+  debug:
+    msg: "eip_info is {{ eip_info }}"
+  when: eip_info.addresses[0].instance_id is defined
 
-#        - name: delete the elastic ip's from the instances
-#          community.aws.ec2_eip:
-#            aws_access_key: "{{ aws_access_key_id }}"
-#            aws_secret_key: "{{ aws_secret_access_key }}"
-#            device_id: "{{ item.addresses[0].instance_id }}"
-#            public_ip: "{{ item.addresses[0].public_ip }}"
-#            region: "{{ aws_region }}"
-#            release_on_disassociation: yes
-#            state: absent
-#          when: item.addresses[0].instance_id is defined
-#          with_items: "{{ eip_info.results }}"
+- name: delete the elastic ip's from the instances
+  community.aws.ec2_eip:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    device_id: "{{ eip_info.addresses[0].instance_id }}"
+    public_ip: "{{ eip_info.addresses[0].public_ip }}"
+    region: "{{ aws_region }}"
+    release_on_disassociation: yes
+    state: absent
+  when: eip_info.addresses[0].instance_id is defined
 
 #        - name: delete the instances
 #          amazon.aws.ec2_instance:
