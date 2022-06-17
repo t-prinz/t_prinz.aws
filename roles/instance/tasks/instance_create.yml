@@ -20,8 +20,12 @@
 - name: print VPC id information
   debug:
     var: vpc_info.vpcs[0].id
-    verbosity: 1
+#    verbosity: 1
   when: vpc_info.vpcs is defined
+
+- name: print other stuff
+  debug:
+    msg: "region - {{ aws_region }} sgname {{ aws_securitygroup_name }}"
 
 - name: get security group facts
   amazon.aws.ec2_group_info:
