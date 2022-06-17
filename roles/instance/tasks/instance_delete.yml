@@ -8,7 +8,7 @@
     region: "{{ aws_region }}"
   register: instance_info
 
-- name: Block to delete the instance
+- name: Block to delete the instance if it exists and is not terminated
   block:
 
     - name: print instance info
@@ -20,108 +20,87 @@
       debug:
         msg: "Deleting instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
 
-  when: instance_info.instances[0] is defined and instance_info.instances[0].state.name != "terminated"
+    - name: get elastic ip info
+      community.aws.ec2_eip_info:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        filters:
+          "tag:Name": "{{ aws_base_name }}-{{ aws_instance.ansible_instance_shortname }}"
+        region: "{{ aws_region }}"
+      register: eip_info
 
-#    - name: gather information about the VPC
-#      amazon.aws.ec2_vpc_net_info:
+    - name: print elastic ip info
+      debug:
+        var: eip_info
+#        verbosity: 1
+      when: eip_info.addresses[0] is defined
+
+    - name: get route53 zone id
+      community.aws.route53_zone:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        zone: "{{ aws_route53_zone }}"
+      register: route53_zone_info
+
+    - name: print route53_zone_info
+      debug:
+        var: route53_zone_info
+
+    - name: print what to query
+      debug:
+        msg: "Querying for {{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+      when: eip_info.addresses[0].tags.Name is defined
+
+    - name: get route53 dns info for the instances
+      community.aws.route53_info:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        type: A
+        query: record_sets
+        hosted_zone_id: "{{ route53_zone_info.zone_id }}"
+#        max_items: "{{ '1'|int }}"
+        start_record_name: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+      when: eip_info.addresses[0].tags.Name is defined
+      register: route53_out
+
+    - name: print route53 dns info
+      debug:
+        var: route53_out
+#        verbosity: 1
+
+#    - name: delete the route53 dns entries
+#      community.aws.route53:
 #        aws_access_key: "{{ aws_access_key_id }}"
 #        aws_secret_key: "{{ aws_secret_access_key }}"
-#        filters:
-#          "tag:Name": "{{ aws_vpc_name }}"
+#        record: "{{ route53_out.ResourceRecordSets[0].Name }}"
+#        state: absent
+##        ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
+#        type: "{{ route53_out.ResourceRecordSets[0].Type }}"
+#        value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
+#        wait: Yes
+#        zone: "{{ aws_route53_zone }}"
+#      when: route53_out.ResourceRecordSets[0].Name is defined
+
+#    - name: delete the elastic ip's from the instances
+#      community.aws.ec2_eip:
+#        aws_access_key: "{{ aws_access_key_id }}"
+#        aws_secret_key: "{{ aws_secret_access_key }}"
+#        device_id: "{{ eip_info.addresses[0].instance_id }}"
+#        public_ip: "{{ eip_info.addresses[0].public_ip }}"
 #        region: "{{ aws_region }}"
-#      register: vpc_info
+#        release_on_disassociation: yes
+#        state: absent
+#      when: eip_info.addresses[0].instance_id is defined
 
-#    - name: print VPC information
-#      debug:
-#        var: vpc_info
-#        verbosity: 1
+#    - name: delete the instances
+#      amazon.aws.ec2_instance:
+#        aws_access_key: "{{ aws_access_key_id }}"
+#        aws_secret_key: "{{ aws_secret_access_key }}"
+#        image_id: "{{ instance_info.instances[0].image_id }}"
+#        instance_ids: "{{ instance_info.instances[0].instance_id }}"
+#        instance_type: "{{ instance_info.instances[0].instance_type }}"
+#        name: "{{ instance_info.instances[0].tags.Name }}"
+#        region: "{{ aws_region }}"
+#        state: absent
 
-#    - name: print VPC id information
-#      debug:
-#        var: vpc_info.vpcs[0].id
-#        verbosity: 1
-
-- name: get elastic ip info
-  community.aws.ec2_eip_info:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    filters:
-      "tag:Name": "{{ aws_base_name }}-{{ aws_instance.ansible_instance_shortname }}"
-    region: "{{ aws_region }}"
-  register: eip_info
-
-- name: print elastic ip info
-  debug:
-    var: eip_info
-#    verbosity: 1
-  when: eip_info.addresses[0] is defined
-
-- name: get route53 zone id
-  community.aws.route53_zone:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    zone: "{{ aws_route53_zone }}"
-  register: route53_zone_info
-
-- name: print route53_zone_info
-  debug:
-    var: route53_zone_info
-
-- name: print what to query
-  debug:
-    msg: "Querying for {{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
-  when: eip_info.addresses[0].tags.Name is defined
-
-- name: get route53 dns info for the instances
-  community.aws.route53_info:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    type: A
-    query: record_sets
-    hosted_zone_id: "{{ route53_zone_info.zone_id }}"
-#    max_items: "{{ '1'|int }}"
-#    start_record_name: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
-    start_record_name: "tprinz-sat.sandbox472.opentlc.com"
-  when: eip_info.addresses[0].tags.Name is defined
-  register: route53_out
-
-- name: print route53 dns info
-  debug:
-    var: route53_out
-#    verbosity: 1
-
-#- name: delete the route53 dns entries
-#  community.aws.route53:
-#    aws_access_key: "{{ aws_access_key_id }}"
-#    aws_secret_key: "{{ aws_secret_access_key }}"
-#    record: "{{ route53_out.ResourceRecordSets[0].Name }}"
-#    state: absent
-##    ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
-#    type: "{{ route53_out.ResourceRecordSets[0].Type }}"
-#    value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
-#    wait: Yes
-#    zone: "{{ aws_route53_zone }}"
-#  when: route53_out.ResourceRecordSets[0].Name is defined
-
-#- name: delete the elastic ip's from the instances
-#  community.aws.ec2_eip:
-#    aws_access_key: "{{ aws_access_key_id }}"
-#    aws_secret_key: "{{ aws_secret_access_key }}"
-#    device_id: "{{ eip_info.addresses[0].instance_id }}"
-#    public_ip: "{{ eip_info.addresses[0].public_ip }}"
-#    region: "{{ aws_region }}"
-#    release_on_disassociation: yes
-#    state: absent
-#  when: eip_info.addresses[0].instance_id is defined
-
-#- name: delete the instances
-#  amazon.aws.ec2_instance:
-#    aws_access_key: "{{ aws_access_key_id }}"
-#    aws_secret_key: "{{ aws_secret_access_key }}"
-#    image_id: "{{ instance_info.instances[0].image_id }}"
-#    instance_ids: "{{ instance_info.instances[0].instance_id }}"
-#    instance_type: "{{ instance_info.instances[0].instance_type }}"
-#    name: "{{ instance_info.instances[0].tags.Name }}"
-#    region: "{{ aws_region }}"
-#    state: absent
-#  when: instance_info.instances[0] is defined
+  when: instance_info.instances[0] is defined and instance_info.instances[0].state.name != "terminated"
