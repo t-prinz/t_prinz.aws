@@ -70,7 +70,7 @@
 
     - name: define dns name to delete
       set_fact:
-        dns_name_to_delete: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+        dns_name_to_delete: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}."
 
     - name: test to see what will happen
       debug:
