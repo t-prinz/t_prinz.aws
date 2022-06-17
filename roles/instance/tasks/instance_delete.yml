@@ -70,6 +70,7 @@
 - name: print what to query
   debug:
     msg: "Querying for {{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+  when: eip_info.addresses[0].tags.Name is defined
 
 - name: get route53 dns info for the instances
   community.aws.route53_info:
