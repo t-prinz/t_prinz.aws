@@ -80,7 +80,8 @@
     - name: test to see what will happen
       debug:
         msg: "Deleting the dns entry {{ route53_out.ResourceRecordSets[0].Name }}"
-      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
+      when: route53_out.ResourceRecordSets[0].Name is defined
+#      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
 
     - name: delete the route53 dns entry
       community.aws.route53:
