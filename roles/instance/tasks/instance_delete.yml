@@ -84,18 +84,18 @@
     var: route53_out
 #    verbosity: 1
 
-- name: delete the route53 dns entries
-  community.aws.route53:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    record: "{{ route53_out.ResourceRecordSets[0].Name }}"
-    state: absent
-    ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
-    type: "{{ route53_out.ResourceRecordSets[0].Type }}"
-    value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
-    wait: Yes
-    zone: "{{ aws_route53_zone }}"
-  when: route53_out.ResourceRecordSets[0].Name is defined
+#- name: delete the route53 dns entries
+#  community.aws.route53:
+#    aws_access_key: "{{ aws_access_key_id }}"
+#    aws_secret_key: "{{ aws_secret_access_key }}"
+#    record: "{{ route53_out.ResourceRecordSets[0].Name }}"
+#    state: absent
+#    ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
+#    type: "{{ route53_out.ResourceRecordSets[0].Type }}"
+#    value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
+#    wait: Yes
+#    zone: "{{ aws_route53_zone }}"
+#  when: route53_out.ResourceRecordSets[0].Name is defined
 
 #        - name: print elastic ip info bub
 #          debug:
