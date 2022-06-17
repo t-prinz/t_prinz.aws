@@ -17,6 +17,14 @@
     region: "{{ aws_region }}"
   register: vpc_info
 
+- name: print VPC info
+  debug:
+    var: vpc_info
+
+- name: print vpc_name
+  debug:
+    var: aws_vpc_name
+
 - name: print VPC id information
   debug:
     var: vpc_info.vpcs[0].id
