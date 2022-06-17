@@ -45,10 +45,12 @@
     - name: print route53_zone_info
       debug:
         var: route53_zone_info
+        verbosity: 1
 
     - name: print what to query
       debug:
         msg: "Querying for {{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+        verbosity: 1
       when: eip_info.addresses[0].tags.Name is defined
 
 # This returns unexpected records from the zone if there is no match; probably user error
@@ -68,16 +70,17 @@
     - name: print route53 dns info
       debug:
         var: route53_out
-#        verbosity: 1
+        verbosity: 1
 
 # Set dns name we want to delete to make sure that is what was returned from the query
 # The "." is added since the fqdn that is returned from the query includes it as part of the name
+# Hmm, this started working...
 
     - name: define dns name to delete
       set_fact:
         dns_name_to_delete: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}."
 
-    - name: test to see what will happen
+    - name: Print dns name to be deleted
       debug:
         msg: "Deleting the dns entry {{ route53_out.ResourceRecordSets[0].Name }}"
       when: route53_out.ResourceRecordSets[0].Name is defined
@@ -97,26 +100,26 @@
       when: route53_out.ResourceRecordSets[0].Name is defined
 #      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
 
-#    - name: delete the elastic ip's from the instance
-#      community.aws.ec2_eip:
-#        aws_access_key: "{{ aws_access_key_id }}"
-#        aws_secret_key: "{{ aws_secret_access_key }}"
-#        device_id: "{{ eip_info.addresses[0].instance_id }}"
-#        public_ip: "{{ eip_info.addresses[0].public_ip }}"
-#        region: "{{ aws_region }}"
-#        release_on_disassociation: yes
-#        state: absent
-#      when: eip_info.addresses[0].instance_id is defined
+    - name: delete the elastic ip's from the instance
+      community.aws.ec2_eip:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        device_id: "{{ eip_info.addresses[0].instance_id }}"
+        public_ip: "{{ eip_info.addresses[0].public_ip }}"
+        region: "{{ aws_region }}"
+        release_on_disassociation: yes
+        state: absent
+      when: eip_info.addresses[0].instance_id is defined
 
-#    - name: delete the instance
-#      amazon.aws.ec2_instance:
-#        aws_access_key: "{{ aws_access_key_id }}"
-#        aws_secret_key: "{{ aws_secret_access_key }}"
-#        image_id: "{{ instance_info.instances[0].image_id }}"
-#        instance_ids: "{{ instance_info.instances[0].instance_id }}"
-#        instance_type: "{{ instance_info.instances[0].instance_type }}"
-#        name: "{{ instance_info.instances[0].tags.Name }}"
-#        region: "{{ aws_region }}"
-#        state: absent
+    - name: delete the instance
+      amazon.aws.ec2_instance:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        image_id: "{{ instance_info.instances[0].image_id }}"
+        instance_ids: "{{ instance_info.instances[0].instance_id }}"
+        instance_type: "{{ instance_info.instances[0].instance_type }}"
+        name: "{{ instance_info.instances[0].tags.Name }}"
+        region: "{{ aws_region }}"
+        state: absent
 
   when: instance_info.instances[0] is defined and instance_info.instances[0].state.name != "terminated"
