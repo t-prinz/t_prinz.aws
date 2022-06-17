@@ -51,6 +51,8 @@
         msg: "Querying for {{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
       when: eip_info.addresses[0].tags.Name is defined
 
+# This returns unexpected records from the zone if there is no match; probably user error
+
     - name: get route53 dns info for the instance
       community.aws.route53_info:
         aws_access_key: "{{ aws_access_key_id }}"
@@ -59,7 +61,7 @@
         query: record_sets
         hosted_zone_id: "{{ route53_zone_info.zone_id }}"
         max_items: "{{ '1'|int }}"
-        start_record_name: "fart{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}."
+        start_record_name: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
       when: eip_info.addresses[0].tags.Name is defined
       register: route53_out
 
@@ -67,6 +69,9 @@
       debug:
         var: route53_out
 #        verbosity: 1
+
+# Set dns name we want to delete to make sure that is what was returned from the query
+# The "." is added since the fqdn that is returned from the query includes it as part of the name
 
     - name: define dns name to delete
       set_fact:
