@@ -41,7 +41,6 @@
 #        var: vpc_info.vpcs[0].id
 #        verbosity: 1
 
-#      tag:Name: "{{ item.tags.Name }}"
 - name: get elastic ip info
   community.aws.ec2_eip_info:
     aws_access_key: "{{ aws_access_key_id }}"
@@ -85,21 +84,18 @@
     var: route53_out
 #    verbosity: 1
 
-#    - name: delete resources associated with the instances
-#      block:
-#        - name: delete the route53 dns entries
-#          community.aws.route53:
-#            aws_access_key: "{{ aws_access_key_id }}"
-#            aws_secret_key: "{{ aws_secret_access_key }}"
-#            record: "{{ item.ResourceRecordSets[0].Name }}"
-#            state: absent
-#            ttl: "{{ item.ResourceRecordSets[0].TTL }}"
-#            type: "{{ item.ResourceRecordSets[0].Type }}"
-#            value: "{{ item.ResourceRecordSets[0].ResourceRecords[0].Value }}"
-#            wait: Yes
-#            zone: "{{ aws_route53_zone }}"
-#          when: item.ResourceRecordSets[0].Name is defined
-#          with_items: "{{ route53_out.results }}"
+- name: delete the route53 dns entries
+  community.aws.route53:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    record: "{{ route53_out.ResourceRecordSets[0].Name }}"
+    state: absent
+    ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
+    type: "{{ route53_out.ResourceRecordSets[0].Type }}"
+    value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
+    wait: Yes
+    zone: "{{ aws_route53_zone }}"
+  when: route53_out.ResourceRecordSets[0].Name is defined
 
 #        - name: print elastic ip info bub
 #          debug:
