@@ -79,7 +79,8 @@
     query: record_sets
     hosted_zone_id: "{{ route53_zone_info.zone_id }}"
 #    max_items: "{{ '1'|int }}"
-    start_record_name: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+#    start_record_name: "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+    start_record_name: "tprinz-aws-dev-01.sandbox472.opentlc.com"
   when: eip_info.addresses[0].tags.Name is defined
   register: route53_out
 
