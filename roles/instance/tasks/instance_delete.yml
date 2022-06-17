@@ -68,7 +68,12 @@
         var: route53_out
 #        verbosity: 1
 
-#    - name: delete the route53 dns entries
+    - name: test to see what will happen
+      debug:
+        msg: "will delete the dns entry"
+      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
+
+#    - name: delete the route53 dns entry
 #      community.aws.route53:
 #        aws_access_key: "{{ aws_access_key_id }}"
 #        aws_secret_key: "{{ aws_secret_access_key }}"
@@ -79,28 +84,28 @@
 #        value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
 #        wait: Yes
 #        zone: "{{ aws_route53_zone }}"
-#      when: route53_out.ResourceRecordSets[0].Name is defined
+#      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == "{{ eip_info.addresses[0].tags.Name }}.{{ aws_route53_zone }}"
 
-    - name: delete the elastic ip's from the instance
-      community.aws.ec2_eip:
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_access_key }}"
-        device_id: "{{ eip_info.addresses[0].instance_id }}"
-        public_ip: "{{ eip_info.addresses[0].public_ip }}"
-        region: "{{ aws_region }}"
-        release_on_disassociation: yes
-        state: absent
-      when: eip_info.addresses[0].instance_id is defined
+#    - name: delete the elastic ip's from the instance
+#      community.aws.ec2_eip:
+#        aws_access_key: "{{ aws_access_key_id }}"
+#        aws_secret_key: "{{ aws_secret_access_key }}"
+#        device_id: "{{ eip_info.addresses[0].instance_id }}"
+#        public_ip: "{{ eip_info.addresses[0].public_ip }}"
+#        region: "{{ aws_region }}"
+#        release_on_disassociation: yes
+#        state: absent
+#      when: eip_info.addresses[0].instance_id is defined
 
-    - name: delete the instance
-      amazon.aws.ec2_instance:
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_access_key }}"
-        image_id: "{{ instance_info.instances[0].image_id }}"
-        instance_ids: "{{ instance_info.instances[0].instance_id }}"
-        instance_type: "{{ instance_info.instances[0].instance_type }}"
-        name: "{{ instance_info.instances[0].tags.Name }}"
-        region: "{{ aws_region }}"
-        state: absent
+#    - name: delete the instance
+#      amazon.aws.ec2_instance:
+#        aws_access_key: "{{ aws_access_key_id }}"
+#        aws_secret_key: "{{ aws_secret_access_key }}"
+#        image_id: "{{ instance_info.instances[0].image_id }}"
+#        instance_ids: "{{ instance_info.instances[0].instance_id }}"
+#        instance_type: "{{ instance_info.instances[0].instance_type }}"
+#        name: "{{ instance_info.instances[0].tags.Name }}"
+#        region: "{{ aws_region }}"
+#        state: absent
 
   when: instance_info.instances[0] is defined and instance_info.instances[0].state.name != "terminated"
