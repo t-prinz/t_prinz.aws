@@ -79,21 +79,21 @@
 
     - name: test to see what will happen
       debug:
-        msg: "will delete the dns entry"
+        msg: "Deleting the dns entry {{ route53_out.ResourceRecordSets[0].Name }}"
       when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
 
-#    - name: delete the route53 dns entry
-#      community.aws.route53:
-#        aws_access_key: "{{ aws_access_key_id }}"
-#        aws_secret_key: "{{ aws_secret_access_key }}"
-#        record: "{{ route53_out.ResourceRecordSets[0].Name }}"
-#        state: absent
-##        ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
-#        type: "{{ route53_out.ResourceRecordSets[0].Type }}"
-#        value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
-#        wait: Yes
-#        zone: "{{ aws_route53_zone }}"
-#      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
+    - name: delete the route53 dns entry
+      community.aws.route53:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        record: "{{ route53_out.ResourceRecordSets[0].Name }}"
+        state: absent
+#        ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
+        type: "{{ route53_out.ResourceRecordSets[0].Type }}"
+        value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
+        wait: Yes
+        zone: "{{ aws_route53_zone }}"
+      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
 
 #    - name: delete the elastic ip's from the instance
 #      community.aws.ec2_eip:
