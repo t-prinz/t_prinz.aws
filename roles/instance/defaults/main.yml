@@ -19,27 +19,28 @@ aws_instance_operation: ""
 
 # This is used to prefix several of the AWS resource names (see below).
 
-####aws_base_name: aws
+####aws_resource_name_prefix: aws
 
 # These specify the AWS region and availability zone.
 
 ####aws_region: us-east-2
 
-# These are defined using aws_base_name as the prefix.  So, there is no need to change these definitions.
+# These are defined using aws_resource_name_prefix as the prefix.  So, there is no need to change these definitions.
 
-####aws_vpc_name: "{{ aws_base_name }}-vpc"
-####aws_subnet_name: "{{ aws_base_name }}-subnet"
-####aws_igw_name: "{{ aws_base_name }}-igw"
-####aws_securitygroup_name: "{{ aws_base_name }}-securitygroup"
+####aws_vpc_name: "{{ aws_resource_name_prefix }}-vpc"
+####aws_subnet_name: "{{ aws_resource_name_prefix }}-subnet"
+####aws_igw_name: "{{ aws_resource_name_prefix }}-igw"
+####aws_securitygroup_name: "{{ aws_resource_name_prefix }}-securitygroup"
 
 ######## These are the same variables used by the environ role - end ########
 
 #aws_instance:
-#  ansible_instance_shortname: aapcont
-#  instance_infra_provider: aws
-#  instance_os_type: Linux
-#  define_hostname: true
-#  update_etchosts_localhost: false
+#  aws_tags:
+#    instance_hvar_os_type: Linux
+#    instance_hvar_basename: myawsinstance
+#    instance_hvar_infra_provider: aws
+#    instance_hvar_define_hostname: true
+#    instance_hvar_update_etchosts_localhost: false
 #  aws_instance_type: t2.xlarge
 #  aws_image_id: ami-009ed7fcb93e10f3a
 #  aws_assign_public_ip: yes

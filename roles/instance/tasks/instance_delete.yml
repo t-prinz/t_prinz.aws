@@ -4,7 +4,7 @@
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
     filters:
-      "tag:Name": "{{ aws_base_name }}-{{ aws_instance.ansible_instance_shortname }}"
+      "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
     region: "{{ aws_region }}"
   register: instance_info
 
@@ -25,7 +25,7 @@
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         filters:
-          "tag:Name": "{{ aws_base_name }}-{{ aws_instance.ansible_instance_shortname }}"
+          "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
         region: "{{ aws_region }}"
       register: eip_info
 

@@ -22,7 +22,7 @@ aws_env_operation: ""
 
 # This is used to prefix several of the AWS resource names (see below).
 
-aws_base_name: aws
+aws_resource_name_prefix: aws
 
 # These specify the AWS region and availability zone.
 
@@ -49,9 +49,9 @@ aws_security_group_rules_egress:
   - proto: all
     cidr_ip: 0.0.0.0/0
 
-# These are defined using aws_base_name as the prefix.  So, there is no need to change these definitions.
+# These are defined using aws_resource_name_prefix as the prefix.  So, there is no need to change these definitions.
 
-aws_vpc_name: "{{ aws_base_name }}-vpc"
-aws_subnet_name: "{{ aws_base_name }}-subnet"
-aws_igw_name: "{{ aws_base_name }}-igw"
-aws_securitygroup_name: "{{ aws_base_name }}-securitygroup"
+aws_vpc_name: "{{ aws_resource_name_prefix }}-vpc"
+aws_subnet_name: "{{ aws_resource_name_prefix }}-subnet"
+aws_igw_name: "{{ aws_resource_name_prefix }}-igw"
+aws_securitygroup_name: "{{ aws_resource_name_prefix }}-securitygroup"
