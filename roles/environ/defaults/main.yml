@@ -29,9 +29,13 @@ aws_resource_name_prefix: aws
 aws_region: us-east-2
 aws_az: us-east-2a
 
+# This is the CIDR block for the VPC.
+
+aws_vpc_cidr_block: 10.0.0.0/24
+
 # This is the CIDR block for the subnet.
 
-aws_cidr_block: 10.0.0.0/24
+aws_subnet_cidr_block: 10.0.0.0/24
 
 # This defines the security group rules to be applied.  The example below opens ports 22 and 5986.
 
