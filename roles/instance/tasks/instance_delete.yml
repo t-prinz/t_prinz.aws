@@ -74,7 +74,6 @@
 
 # Set dns name we want to delete to make sure that is what was returned from the query
 # The "." is added since the fqdn that is returned from the query includes it as part of the name
-# Hmm, this started working...
 
     - name: define dns name to delete
       set_fact:
@@ -84,7 +83,6 @@
       debug:
         msg: "Deleting the dns entry {{ route53_out.ResourceRecordSets[0].Name }}"
       when: route53_out.ResourceRecordSets[0].Name is defined
-#      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
 
     - name: delete the route53 dns entry
       community.aws.route53:
@@ -92,13 +90,11 @@
         aws_secret_key: "{{ aws_secret_access_key }}"
         record: "{{ route53_out.ResourceRecordSets[0].Name }}"
         state: absent
-#        ttl: "{{ route53_out.ResourceRecordSets[0].TTL }}"
         type: "{{ route53_out.ResourceRecordSets[0].Type }}"
         value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
         wait: Yes
         zone: "{{ aws_route53_zone }}"
       when: route53_out.ResourceRecordSets[0].Name is defined
-#      when: route53_out.ResourceRecordSets[0].Name is defined and route53_out.ResourceRecordSets[0].Name == dns_name_to_delete
 
     - name: delete the elastic ip's from the instance
       community.aws.ec2_eip:
