@@ -44,6 +44,7 @@ aws_instance_operation: ""
 #  aws_instance_type: t2.xlarge
 #  aws_image_id: ami-009ed7fcb93e10f3a
 #  aws_assign_public_ip: yes
+#  aws_assign_elastic_ip: yes
 #  aws_volume_list:
 #    - device_name: /dev/sda1
 #      ebs:

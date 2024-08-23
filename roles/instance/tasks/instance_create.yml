@@ -102,48 +102,53 @@
 
 # TODO:  add tag information
 
-- name: Generate elastic IP for instances
-  community.aws.ec2_eip:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    device_id: "{{ instance_info.instance_ids[0] }}"
-    in_vpc: True
-    region: "{{ aws_region }}"
-    release_on_disassociation: yes
-    state: present
-  register: eip_info
+- name: Block to create an elastic IP and add a route53 DNS entry
+  block:
 
-- name: print eip info
-  debug:
-    var: eip_info
-    verbosity: 1
+    - name: Generate elastic IP for instances
+      community.aws.ec2_eip:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        device_id: "{{ instance_info.instance_ids[0] }}"
+        in_vpc: True
+        region: "{{ aws_region }}"
+        release_on_disassociation: yes
+        state: present
+      register: eip_info
 
-- name: tag eip
-  amazon.aws.ec2_tag:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    region: "{{ aws_region }}"
-    resource: "{{ eip_info.allocation_id }}"
-    state: present
-    tags:
-      Name: "{{ instance_info.instances[0].tags.Name }}"
+    - name: print eip info
+      debug:
+        var: eip_info
+        verbosity: 1
 
-- name: print the dns name
-  debug:
-    msg: "hostname {{ instance_info.instances[0].tags.Name }}.{{ aws_route53_zone }} has IP {{ eip_info.public_ip }}"
-#    verbosity: 1
+    - name: tag eip
+      amazon.aws.ec2_tag:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        region: "{{ aws_region }}"
+        resource: "{{ eip_info.allocation_id }}"
+        state: present
+        tags:
+          Name: "{{ instance_info.instances[0].tags.Name }}"
 
-- name: Generate route53 entry for the elastic IP
-  community.aws.route53:
-    aws_access_key: "{{ aws_access_key_id }}"
-    aws_secret_key: "{{ aws_secret_access_key }}"
-    record: "{{ instance_info.instances[0].tags.Name }}.{{ aws_route53_zone }}"
-    state: present
-    ttl: 300
-    type: A
-    value: "{{ eip_info.public_ip }}"
-    wait: Yes
-    zone: "{{ aws_route53_zone }}"
+    - name: print the dns name
+      debug:
+        msg: "hostname {{ instance_info.instances[0].tags.Name }}.{{ aws_route53_zone }} has IP {{ eip_info.public_ip }}"
+#        verbosity: 1
+
+    - name: Generate route53 entry for the elastic IP
+      community.aws.route53:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        record: "{{ instance_info.instances[0].tags.Name }}.{{ aws_route53_zone }}"
+        state: present
+        ttl: 300
+        type: A
+        value: "{{ eip_info.public_ip }}"
+        wait: Yes
+        zone: "{{ aws_route53_zone }}"
+
+  when: aws_assign_elastic_ip
 
 - name: Print state of instance
   debug:
