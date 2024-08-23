@@ -8,10 +8,6 @@
     region: "{{ aws_region }}"
   register: instance_info
 
-- name: wth
-  debug:
-    var: instance_info
-
 - name: Block to delete the instance if it exists and is not terminated
   block:
 
