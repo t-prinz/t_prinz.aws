@@ -18,7 +18,7 @@
   register: vpc_info
 
 - name: print VPC id information
-  debug:
+  ansible.builtin.debug:
     var: vpc_info.vpcs[0].id
     verbosity: 1
   when: vpc_info.vpcs is defined
@@ -35,12 +35,12 @@
   when: vpc_info.vpcs is defined
 
 - name: print security group info
-  debug:
+  ansible.builtin.debug:
     var: security_group_info
     verbosity: 1
 
 - name: print security group id info
-  debug:
+  ansible.builtin.debug:
     var: security_group_info.security_groups[0].group_id
     verbosity: 1
   when: security_group_info is defined
@@ -57,12 +57,12 @@
   when: vpc_info.vpcs is defined
 
 - name: print subnet info
-  debug:
+  ansible.builtin.debug:
     var: subnet_info
     verbosity: 1
 
 - name: print subnet id info
-  debug:
+  ansible.builtin.debug:
     var: subnet_info.subnets[0].id
     verbosity: 1
   when: subnet_info is defined
@@ -88,25 +88,14 @@
   register: instance_info
 
 - name: print instance info
-  debug:
+  ansible.builtin.debug:
     var: instance_info
     verbosity: 1
-
-#- name: Define common Linux host variables
-#  set_fact:
-#    common_linux_hostvars: "ansible_user={{ aws_linux_ansible_user }} ansible_ssh_private_key_file={{ aws_keypair_key_file }}"
-
-#- name: Define common Windows host variables
-#  set_fact:
-#    common_windows_hostvars: "ansible_user={{ windows_admin_username }} ansible_password={{ windows_admin_password }} ansible_connection=winrm ansible_winrm_transport=ntlm ansible_port=5985 ansible_winrm_server_cert_validation=ignore"
-
-# TODO:  add tag information
 
 - name: Block to create an elastic IP and add a route53 DNS entry
   block:
 
     - name: Generate elastic IP for instances
-#      community.aws.ec2_eip:
       amazon.aws.ec2_eip:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
@@ -118,7 +107,7 @@
       register: eip_info
 
     - name: print eip info
-      debug:
+      ansible.builtin.debug:
         var: eip_info
         verbosity: 1
 
@@ -133,12 +122,10 @@
           Name: "{{ instance_info.instances[0].tags.Name }}"
 
     - name: print the dns name
-      debug:
+      ansible.builtin.debug:
         msg: "hostname {{ instance_info.instances[0].tags.Name }}.{{ aws_route53_zone }} has IP {{ eip_info.public_ip }}"
-#        verbosity: 1
 
     - name: Generate route53 entry for the elastic IP
-#      community.aws.route53:
       amazon.aws.route53:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
@@ -153,6 +140,6 @@
   when: aws_instance.aws_assign_elastic_ip
 
 - name: Print state of instance
-  debug:
+  ansible.builtin.debug:
     msg: " Instance {{ instance_info.instances[0].tags.Name }} is {{ instance_info.instances[0].state.name }}"
     verbosity: 1
