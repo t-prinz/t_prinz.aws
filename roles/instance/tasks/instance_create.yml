@@ -148,7 +148,7 @@
         wait: Yes
         zone: "{{ aws_route53_zone }}"
 
-  when: aws_assign_elastic_ip
+  when: instance_info.aws_assign_elastic_ip
 
 - name: Print state of instance
   debug:
