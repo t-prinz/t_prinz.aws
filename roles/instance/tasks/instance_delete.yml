@@ -100,7 +100,7 @@
         value: "{{ route53_out.resource_record_sets[0].resource_records[0].value }}"
         wait: Yes
         zone: "{{ aws_route53_zone }}"
-      when: route53_out.route53_out.resource_record_sets[0].name is defined
+      when: route53_out.resource_record_sets[0].name is defined
 
     - name: delete the elastic ip's from the instance
 #      community.aws.ec2_eip:
