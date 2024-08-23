@@ -106,7 +106,8 @@
   block:
 
     - name: Generate elastic IP for instances
-      community.aws.ec2_eip:
+#      community.aws.ec2_eip:
+      amazon.aws.ec2_eip:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         device_id: "{{ instance_info.instance_ids[0] }}"
@@ -137,7 +138,8 @@
 #        verbosity: 1
 
     - name: Generate route53 entry for the elastic IP
-      community.aws.route53:
+#      community.aws.route53:
+      amazon.aws.route53:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         record: "{{ instance_info.instances[0].tags.Name }}.{{ aws_route53_zone }}"

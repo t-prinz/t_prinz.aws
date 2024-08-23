@@ -21,7 +21,8 @@
         msg: "Deleting instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
 
     - name: get elastic ip info
-      community.aws.ec2_eip_info:
+#      community.aws.ec2_eip_info:
+      amazon.aws.ec2_eip_info:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         filters:
@@ -36,7 +37,8 @@
       when: eip_info.addresses[0] is defined
 
     - name: get route53 zone id
-      community.aws.route53_zone:
+#      community.aws.route53_zone:
+      amazon.aws.route53_zone:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         zone: "{{ aws_route53_zone }}"
@@ -70,7 +72,7 @@
     - name: print route53 dns info
       debug:
         var: route53_out
-        verbosity: 1
+#        verbosity: 1
 
 # Set dns name we want to delete to make sure that is what was returned from the query
 # The "." is added since the fqdn that is returned from the query includes it as part of the name
@@ -85,7 +87,8 @@
       when: route53_out.ResourceRecordSets[0].Name is defined
 
     - name: delete the route53 dns entry
-      community.aws.route53:
+#      community.aws.route53:
+      amazon.aws.route53:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         record: "{{ route53_out.ResourceRecordSets[0].Name }}"
@@ -97,7 +100,8 @@
       when: route53_out.ResourceRecordSets[0].Name is defined
 
     - name: delete the elastic ip's from the instance
-      community.aws.ec2_eip:
+#      community.aws.ec2_eip:
+      amazon.aws.ec2_eip:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         device_id: "{{ eip_info.addresses[0].instance_id }}"
