@@ -58,7 +58,8 @@
 # This returns unexpected records from the zone if there is no match; probably user error
 
     - name: get route53 dns info for the instance
-      community.aws.route53_info:
+#      community.aws.route53_info:
+      amazon.aws.route53_info:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         type: A
@@ -83,21 +84,23 @@
 
     - name: Print dns name to be deleted
       debug:
-        msg: "Deleting the dns entry {{ route53_out.ResourceRecordSets[0].Name }}"
-      when: route53_out.ResourceRecordSets[0].Name is defined
+#        msg: "Deleting the dns entry {{ route53_out.ResourceRecordSets[0].Name }}"
+        msg: "Deleting the dns entry {{ route53_out.resource_record_sets[0].name }}"
+      when: route53_out.resource_record_sets[0].name is defined
 
     - name: delete the route53 dns entry
 #      community.aws.route53:
       amazon.aws.route53:
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
-        record: "{{ route53_out.ResourceRecordSets[0].Name }}"
+        record: "{{ route53_out.resource_record_sets[0].name }}"
         state: absent
-        type: "{{ route53_out.ResourceRecordSets[0].Type }}"
-        value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
+        type: "{{ route53_out.resource_record_sets[0].type }}"
+#        value: "{{ route53_out.ResourceRecordSets[0].ResourceRecords[0].Value }}"
+        value: "{{ route53_out.resource_record_sets[0].resource_records[0].value }}"
         wait: Yes
         zone: "{{ aws_route53_zone }}"
-      when: route53_out.ResourceRecordSets[0].Name is defined
+      when: route53_out.route53_out.resource_record_sets[0].name is defined
 
     - name: delete the elastic ip's from the instance
 #      community.aws.ec2_eip:
