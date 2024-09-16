@@ -58,4 +58,4 @@
       cidr_block: "{{ aws_vpc_cidr_block }}"
       state: absent
 
-  when: vpc_info.vpcs is defined
+  when: vpc_info.vpcs is defined and vpc_info.vpcs[0] is defined
