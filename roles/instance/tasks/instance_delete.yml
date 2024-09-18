@@ -1,10 +1,11 @@
 ---
+#      "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
 - name: get instance info
   amazon.aws.ec2_instance_info:
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
     filters:
-      "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
+      "tag:Name": "{{ inventory_hostname }}"
     region: "{{ aws_region }}"
   register: instance_info
 
@@ -20,17 +21,17 @@
       ansible.builtin.debug:
         msg: "Deleting instance {{ inventory_hostname }} with instand_id:  {{ instance_info.instances[0].instance_id }}"
 
+    - name: get elastic ip info
+      amazon.aws.ec2_eip_info:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        filters:
+          "tag:Name": "{{ inventory_hostname }}"
+        region: "{{ aws_region }}"
+      register: eip_info
+
     - name: Block to delete the route53 name and the elastic IP if defined
       block:
-
-        - name: get elastic ip info
-          amazon.aws.ec2_eip_info:
-            aws_access_key: "{{ aws_access_key_id }}"
-            aws_secret_key: "{{ aws_secret_access_key }}"
-            filters:
-              "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
-            region: "{{ aws_region }}"
-          register: eip_info
 
         - name: print elastic ip info
           ansible.builtin.debug:
@@ -110,7 +111,8 @@
             state: absent
           when: eip_info.addresses[0].instance_id is defined
 
-      when: aws_instance.aws_assign_elastic_ip
+      when: eip_info.addresses[0].instance_id is defined
+#      when: aws_instance.aws_assign_elastic_ip
 
 
     - name: delete the instance
