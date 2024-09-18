@@ -1,5 +1,4 @@
 ---
-#      "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
 - name: get instance info
   amazon.aws.ec2_instance_info:
     aws_access_key: "{{ aws_access_key_id }}"

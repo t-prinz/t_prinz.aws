@@ -4,7 +4,7 @@
     aws_access_key: "{{ aws_access_key_id }}"
     aws_secret_key: "{{ aws_secret_access_key }}"
     filters:
-      "tag:Name": "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
+      "tag:Name": "{{ inventory_hostname }}"
     region: "{{ aws_region }}"
   register: instance_info
 
