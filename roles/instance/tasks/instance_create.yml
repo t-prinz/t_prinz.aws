@@ -67,15 +67,15 @@
     verbosity: 1
   when: subnet_info is defined
 
-- name: Define Windows user_data
-  ansible.builtin.set_fact:
-    win_user_data: "{{ lookup('template', 'win_ec2_user_data.ps1.j2') }}"
-  when: aws_instance.aws_tags.instance_hvar_os_type == 'Windows'
+#- name: Define Windows user_data
+#  ansible.builtin.set_fact:
+#    win_user_data: "{{ lookup('template', 'win_ec2_user_data.ps1.j2') }}"
+#  when: aws_instance.aws_tags.instance_hvar_os_type == 'Windows'
 
-- name: Print Windows user_data
-  ansible.builtin.debug:
-    var: win_user_data
-  when: aws_instance.aws_tags.instance_hvar_os_type == 'Windows'
+#- name: Print Windows user_data
+#  ansible.builtin.debug:
+#    var: win_user_data
+#  when: aws_instance.aws_tags.instance_hvar_os_type == 'Windows'
 
 - name: create and launch instance
   amazon.aws.ec2_instance:

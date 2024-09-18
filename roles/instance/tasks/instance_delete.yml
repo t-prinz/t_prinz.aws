@@ -12,6 +12,7 @@
 - name: print instance info
   debug:
     var: instance_info
+    verbosity: 1
 
 - name: Block to delete the instance if it exists and is not terminated
   block:
