@@ -92,6 +92,15 @@
     var: instance_info
     verbosity: 1
 
+- name: print elastic ip flag
+  ansible.builtin.debug:
+    var: aws_instance.aws_assign_elastic_ip
+
+- name: print something if the elastic ip flag is set to true
+  ansible.builtin.debug:
+    msg: "Generating an elastic IP"
+  when: aws_instance.aws_assign_elastic_ip
+
 - name: Block to create an elastic IP and add a route53 DNS entry
   block:
 
