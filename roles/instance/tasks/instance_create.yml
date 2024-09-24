@@ -85,7 +85,8 @@
     instance_type: "{{ aws_instance.aws_instance_type }}"
     key_name: "{{ aws_keypair }}"
     name: "{{ aws_resource_name_prefix }}-{{ aws_instance.aws_tags.instance_hvar_basename }}"
-    network:
+#    network:
+    network_interfaces:
       assign_public_ip: "{{ aws_instance.aws_assign_public_ip }}"
     region: "{{ aws_region }}"
     security_group: "{{ security_group_info.security_groups[0].group_id }}"
