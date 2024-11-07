@@ -6,6 +6,10 @@
     msg: "Requested operation: {{ aws_env_operation }}"
 #    verbosity: 1
 
+- name: Print somevar
+  ansible.builtin.debug:
+    msg: "somevar: {{ somevar }}"
+
 - name: Ensure the AWS environment is created
   include_tasks:
     file: env_create.yml
