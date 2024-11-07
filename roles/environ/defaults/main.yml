@@ -18,7 +18,7 @@ aws_secret_access_key: ""
 #   create: creates the environment
 #   delete: deletes the environment
 
-aws_env_operation: ""
+aws_env_operation: "wth"
 
 # This is used to prefix several of the AWS resource names (see below).
 
